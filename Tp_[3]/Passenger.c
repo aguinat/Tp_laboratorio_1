@@ -271,13 +271,15 @@ int GetLastId_LinkedList(LinkedList* pArrayListPassenger){
 	Passenger *auxPassenger = NULL;
 	maxId = 0;
 
-	largoDeLista = ll_len(pArrayListPassenger);
-	if (largoDeLista > 0) {
-		for (int i = 0; i < largoDeLista; i++) {
-			auxPassenger = ll_get(pArrayListPassenger, i);
-			Passenger_getId(auxPassenger, &id);
-			if(id>maxId){
-				maxId = id;
+	if( pArrayListPassenger != NULL){
+		largoDeLista = ll_len(pArrayListPassenger);
+		if (largoDeLista > 0) {
+			for (int i = 0; i < largoDeLista; i++) {
+				auxPassenger = ll_get(pArrayListPassenger, i);
+				Passenger_getId(auxPassenger, &id);
+				if(id>maxId){
+					maxId = id;
+				}
 			}
 		}
 	}

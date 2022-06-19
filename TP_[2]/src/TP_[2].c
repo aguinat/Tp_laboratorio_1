@@ -17,8 +17,8 @@ int main(void) {
 	idPasajero = 0;
 	initPassengers(passager, LEN);
 
-	//Passengers passager[LEN]={{1,"Nathy","Aguila",12.2, "12AS" ,1, 1, 0},{2,"Andrea","Luizaga",256.2, "BJ189AS" ,1, 1, 0},{3,"Sabrina","Soto",12897.2, "182AS" ,3, 3, 0}, {5,"Lorena","Abelino",12.2, "B3526AS" ,2, 3, 0},{7
-		//,"Mariano","Casas",256.2, "CD189AS" ,1, 1, 0},{6,"Brian","Solano",12897.2, "182AS" ,1, 3, 0}};
+	//passager[LEN]={{1,"Nathy","Aguila",12.2, "12AS" ,1, 1, 0},{2,"Andrea","Luizaga",256.2, "BJ189AS" ,1, 1, 0},{3,"Sabrina","Soto",12897.2, "182AS" ,3, 3, 0}, {5,"Lorena","Abelino",12.2, "B3526AS" ,2, 3, 0}
+	//		,{7,"Mariano","Casas",256.2, "CD189AS" ,1, 1, 0},{6,"Brian","Solano",12897.2, "182AS" ,1, 3, 0}};
 
 	do {
 		opcionCorrecta = PedirNumConRango("***********************\n"

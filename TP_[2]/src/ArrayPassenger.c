@@ -89,7 +89,6 @@ int requestPassengers(Passengers list[], int len, int* id, int reintentos){
 	return validacion;
 }
 
-
 int initPassengers(Passengers list[], int len){
 	int validacion;
 
