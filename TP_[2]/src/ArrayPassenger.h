@@ -14,16 +14,7 @@ typedef struct
 
 }Passengers;
 
-typedef struct
-{
-	int id;
-	float acumulador;
-	int contador;
-	float promedio;
-
-}eAuxliar;
-
-int addPaseenger(Passengers list[], int len, int id, char name[], char lastName[], float price, int typePassenger, char flyCode[]);
+int addPaseenger(Passengers list[], int len, int id, char name[], char lastName[], float price, int typePassenger, char flyCode[], int statusFlight);
 int initPassengers(Passengers list[], int len);
 int printPassenger(Passengers list[], int len);
 int searchFreeIndex(Passengers list[], int len);

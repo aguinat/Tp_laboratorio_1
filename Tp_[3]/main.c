@@ -74,7 +74,7 @@ int main()
     						controller_addPassenger(listaPasajeros);
     						break;
     					case 4:
-
+    						controller_editPassenger(listaPasajeros);
     						break;
     					case 5:
 

@@ -54,9 +54,14 @@ int ValidarLetras(char strLetras[]) {
 
 	validacion = 1;
 
+
 	if(strLetras != NULL){
 		for(i=0; i<strlen(strLetras); i++){
 					if( (strLetras[i] != ' ') && (isalpha(strLetras[i]) == 0 ) ){
+						validacion = 0;
+						break;
+					}
+					if(strLetras[i] == ' ' && i == 0){
 						validacion = 0;
 						break;
 					}
@@ -75,6 +80,10 @@ int ValidarLetrasYNum(char strAlfaNum[]) {
 	if(strAlfaNum != NULL){
 		for(i=0; i<strlen(strAlfaNum); i++){
 					if((strAlfaNum[i] != ' ') && (isalpha(strAlfaNum[i]) == 0 ) && (isdigit(strAlfaNum[i]) == 0)){
+						validacion = 0;
+						break;
+					}
+					if (strAlfaNum[i] == ' ' && i == 0) {
 						validacion = 0;
 						break;
 					}

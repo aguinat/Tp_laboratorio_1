@@ -30,8 +30,8 @@ int FactorialDeUnNumero(int numero);
 /// \param desdeElNumero El numero minimo del rango
 /// \param hastaElNumero El numero maximo del rango
 /// \return El numero ingresado
-int PedirNumConRango(char mensaje[],char mensajeError[], int reintentos , int min, int max, int* numeroIngresado);
-
+int GetNumberWithRange(char mensaje[],char mensajeError[], int reintentos , int min, int max, int* numeroIngresado);
+int GetFloatNumberWithRange(char mensaje[],char mensajeError[], int reintentos , int min, int max, float* numeroIngresado);
 
 /// \fn void Swap(int, int, int*, int*)
 /// \brief Intercambia los valores de dos variables de tipo de int

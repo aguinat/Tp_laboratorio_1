@@ -271,7 +271,7 @@ int GetLastId_LinkedList(LinkedList* pArrayListPassenger){
 	Passenger *auxPassenger = NULL;
 	maxId = 0;
 
-	if( pArrayListPassenger != NULL){
+	if(pArrayListPassenger != NULL){
 		largoDeLista = ll_len(pArrayListPassenger);
 		if (largoDeLista > 0) {
 			for (int i = 0; i < largoDeLista; i++) {
@@ -405,20 +405,20 @@ int GetIndexPassenger_ById(LinkedList* pArrayListPassenger, int* index, int id){
 	int largoDeLista;
 	int idExiste;
 	int idAux;
-	Passenger *auxPassenger = NULL;
+	Passenger * auxPassenger = NULL;
 
 	idExiste = 0;
-		largoDeLista = ll_len(pArrayListPassenger);
-		if (largoDeLista > 0) {
-			for (int i = 0; i < largoDeLista; i++) {
-				auxPassenger = ll_get(pArrayListPassenger, i);
-				Passenger_getId(auxPassenger, &idAux);
-				if(id==idAux){
-					*index = i;
-					idExiste = 1;
-				}
+	largoDeLista = ll_len(pArrayListPassenger);
+	if (largoDeLista > 0) {
+		for (int i = 0; i < largoDeLista; i++) {
+			auxPassenger = ll_get(pArrayListPassenger, i);
+			Passenger_getId(auxPassenger, &idAux);
+			if (id == idAux) {
+				*index = i;
+				idExiste = 1;
 			}
 		}
+	}
 
 	return idExiste;
 }

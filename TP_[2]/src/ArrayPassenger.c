@@ -15,7 +15,7 @@
 #define CANCELADO 2
 #define REPROGRAMADO 3
 
-int addPaseenger(Passengers list[], int len, int id, char name[], char lastName[], float price, int typePassenger, char flyCode[]){
+int addPaseenger(Passengers list[], int len, int id, char name[], char lastName[], float price, int typePassenger, char flyCode[], int statusFlight){
 	int index;
 	int validacion;
 
@@ -29,6 +29,7 @@ int addPaseenger(Passengers list[], int len, int id, char name[], char lastName[
 			strcpy(list[index].flyCode, flyCode);
 			list[index].price = price;
 			list[index].typePassenger = typePassenger;
+			list[index].statusFlight = statusFlight;
 			list[index].id = id;
 			list[index].isEmpty = 0;
 
@@ -44,47 +45,65 @@ int requestPassengers(Passengers list[], int len, int* id, int reintentos){
 	int idAux;
 	int validacion;
 	int confirma;
+	int datosCargados;
 	Passengers auxPassengers;
 
+	datosCargados = 1;
 	validacion = 0;
 
 	if(list != NULL && len > 0){
-		idAux = *id;
-		if(GetLetters("Ingrese el nombre del pasajero: ", "\nError. Nombre invalido.", auxPassengers.name, sizeof(auxPassengers.name), reintentos) == 0){
-			printf("Error.No se pudo guardar correctamente el nombre del pasajero.\n");
-		}
-		if(GetLetters("Ingrese el apellido del pasajero: ", "\nError. Apellido invalido.", auxPassengers.lastName, sizeof(auxPassengers.lastName), reintentos) == 0){
-			printf("Error.No se pudo guardar correctamente el Apellido del pasajero.\n");
-		}
-		if(PedirNumConRango("Ingrese el tipo de pasajero: (1 - Bussines, 2 - Economy, 3 - VIP)", "\nError. Tipo ingreso invalido. ", reintentos,1,3, &auxPassengers.typePassenger) == 0){
-			printf("Error.No se pudo guardar correctamente el tipo correspondiente al pasajero.\n");
-		}
-		if(GetFloatNumber("Ingrese el precio del vuelo: ", "\nError. Precio invalido. ", reintentos, &auxPassengers.price) == 0){
-			printf("Error.No se pudo guardar correctamente el precio.\n");
-		}
-		if(GetStringAlfaNum("Ingrese el codigo de vuelo del pasajero: ", "\nError. Codigo invalido.", auxPassengers.flyCode, sizeof(auxPassengers.flyCode), reintentos) == 0){
-			printf("Error.No se pudo guardar correctamente el codigo de vuelo del pasajero.\n");
-		}
-		if(PedirNumConRango("Ingrese el estado del vuelo: (1-ACTIVO, 2- CANCELADO, 3- REPOGRAMADO)", "\nError. Estado invalido. ", reintentos,1,3, &auxPassengers.statusFlight) == 0){
-			printf("Error.No se pudo guardar correctamente el estado del vuelo.\n");
-		}
-		auxPassengers.id = 0;
-		printf("\nEl id se generara una vez que confirme la carga del pasajero.");
-
-		printf("\nPasajero a cargar:\n\n%-5s %-20s %-20s %-20s %-20s %-20s %-25s\n", "ID", "Nombre", "Apellido", "TipoPasajero", "Precio", "EstadoDelVuelo", "CodigoDeVuelo");
-		printSinglePassenger(auxPassengers);
-
-		ConfirmarContinuar("Confirme la carga del pasajero (SI/NO): ", "Ingrese una respuesta valida", &confirma, reintentos);
-		if(confirma==1){
-			auxPassengers.id = idAux+1;
-			if(addPaseenger(list, len, auxPassengers.id, auxPassengers.name, auxPassengers.lastName, auxPassengers.price, auxPassengers.typePassenger, auxPassengers.flyCode)==1){
-				printf("\nSe Realizo la carga correctamente.\n");
-				*id = auxPassengers.id;
-				validacion = 1;
-			}else{
-				printf("ERROR AL CARGAR PASAJERO.\n");
+		do{
+			idAux = *id;
+			if(GetLetters("Ingrese el nombre del pasajero: ", "\nERROR. NOMBRE INVALIDO.\n", auxPassengers.name, sizeof(auxPassengers.name), reintentos) == 0){
+				printf("Error. No se pudo guardar correctamente el nombre del pasajero.\n");
+				datosCargados = 0;
 			}
-		}
+			if(datosCargados!= 0 && GetLetters("Ingrese el apellido del pasajero: ", "\nERROR. APELLIDO INVALIDO.\n", auxPassengers.lastName, sizeof(auxPassengers.lastName), reintentos) == 0){
+				printf("Error. No se pudo guardar correctamente el Apellido del pasajero.\n");
+				datosCargados = 0;
+			}
+			if(datosCargados!= 0 && GetNumberWithRange("Ingrese el tipo de pasajero, (1 - Bussines, 2 - Economy, 3 - VIP): ", "\nERROR. TIPO INGRESO INVALIDO.\n ", reintentos,1,3, &auxPassengers.typePassenger) == 0){
+				printf("Error. No se pudo guardar correctamente el tipo correspondiente al pasajero.\n");
+				datosCargados = 0;
+			}
+			if(datosCargados!= 0 && GetFloatNumberWithRange("Ingrese el precio del vuelo: ", "\nERROR. PRECIO INVALIDO.\n ", reintentos,10,50000 ,&auxPassengers.price) == 0){
+				printf("Error. No se pudo guardar correctamente el precio.\n");
+				datosCargados = 0;
+			}
+			if(datosCargados!= 0 && GetStringAlfaNum("Ingrese el codigo de vuelo del pasajero: ", "\nERROR. CODIGO INVALIDO.\n", auxPassengers.flyCode, sizeof(auxPassengers.flyCode), reintentos) == 0){
+				printf("Error. No se pudo guardar correctamente el codigo de vuelo del pasajero.\n");
+				datosCargados = 0;
+			}
+			if(datosCargados!= 0 && GetNumberWithRange("Ingrese el estado del vuelo, (1-ACTIVO, 2- CANCELADO, 3- REPOGRAMADO): ", "\nError. Estado invalido.\n ", reintentos,1,3, &auxPassengers.statusFlight) == 0){
+				printf("Error. No se pudo guardar correctamente el estado del vuelo.\n");
+				datosCargados = 0;
+			}
+
+			if(datosCargados != 0){
+				auxPassengers.id = 0;
+				printf("\nEl id se generara una vez que confirme la carga del pasajero.");
+				printf("\nPasajero a cargar:\n\n%-5s %-20s %-20s %-20s %-20s %-20s %-25s\n", "ID", "Nombre", "Apellido", "TipoPasajero", "Precio", "EstadoDelVuelo", "CodigoDeVuelo");
+				printSinglePassenger(auxPassengers);
+				ConfirmarContinuar("Confirme la carga del pasajero (SI/NO): ", "Ingrese una respuesta valida", &confirma, reintentos);
+				if(confirma==1){
+					auxPassengers.id = idAux+1;
+					if(addPaseenger(list, len, auxPassengers.id, auxPassengers.name, auxPassengers.lastName, auxPassengers.price, auxPassengers.typePassenger, auxPassengers.flyCode, auxPassengers.statusFlight)==1){
+						printf("\nSe Realizo la carga correctamente.\n");
+						*id = auxPassengers.id;
+						validacion = 1;
+					}else{
+						printf("ERROR AL CARGAR PASAJERO.\n");
+					}
+				}
+			}
+			else {
+				printf("\nUno o mas datos no fueron cargados correctamente.");
+				ConfirmarContinuar("\n¿Quiere volver a reingresar los datos?: (SI/NO) ","\nIngrese una respuesta valida. ", &confirma, REIN);
+				if(confirma == 1){
+					datosCargados = 1;
+				}
+			}
+		} while (confirma == 1 && validacion == 0);
 	}
 	return validacion;
 }
@@ -192,10 +211,9 @@ int printPassenger(Passengers list[], int len){
 
 }
 
-
 int modifyPassengerData(Passengers list[], int len, int reintentos){
-  int i;
   int idPasajero;
+  int index;
   int opcion;
   int opcionCorrecta;
   int continuar;
@@ -207,52 +225,56 @@ int modifyPassengerData(Passengers list[], int len, int reintentos){
 	  printPassenger(list, len);
 	  validacionCorrecta = GetIntNumber("Ingrese el ID del pasajero a modificar: ","\nError. ID invalido.", reintentos, &idPasajero);
 	  if(validacionCorrecta == 1){
-	    for (i = 0; i < len; i++){
-	  	  if (list[i].isEmpty == 0 && list[i].id == idPasajero){
-	  		opcionCorrecta = PedirNumConRango("\n1: Nombre"
-	  			  				  "\n2: Apellido"
-	  			  				  "\n3: Precio"
-	  			  				  "\n4: Tipo de Pasajero"
-	  			  				  "\n5: Codigo de Vuelo"
-	  							  "\n6: Salir"
-	  							  "\nIngrese lo que desea modificar: ", "\n\nOpcion invalida", reintentos,1,5, &opcion);
+	  	  if (findPassengerById(list, len, idPasajero, &index) == 1){
 	  		do{
+	  			opcionCorrecta = GetNumberWithRange("\n1: Nombre"
+	  				  			  				  "\n2: Apellido"
+	  				  			  				  "\n3: Precio"
+	  				  			  				  "\n4: Tipo de Pasajero"
+	  				  			  				  "\n5: Codigo de Vuelo"
+	  				  							  "\n6: Salir"
+	  				  							  "\nIngrese lo que desea modificar: ", "\n\nOPCION INVALIDA.\n\n", reintentos,1,5, &opcion);
 	  			if(opcionCorrecta == 1){
 	  				switch(opcion){
 	  					  		 case 1:
-	  					  			 if(GetLetters("\nIngrese el nombre del pasajero: ", "\nError. Nombre invalido.", list[i].name, sizeof(list[i].name), reintentos) == 0){
+	  					  			 if(GetLetters("\nIngrese el nombre del pasajero: ", "\nError. Nombre invalido.", list[index].name, sizeof(list[index].name), reintentos) == 0){
 	  					  				printf("Error.No se pudo guardar correctamente el nombre del pasajero.\n");
 	  					  			 }
 	  					  			 break;
 	  					  		 case 2:
-	  					  			 GetLetters("\nIngrese el apellido del pasajero: ", "\nError. Apellido invalido.", list[i].lastName, sizeof(list[i].lastName), reintentos);
+	  					  			 GetLetters("\nIngrese el apellido del pasajero: ", "\nError. Apellido invalido.", list[index].lastName, sizeof(list[index].lastName), reintentos);
 	  					  			 break;
 	  					  		 case 3:
-	  					  			GetFloatNumber("\nIngrese el precio: ", "\nError. Precio invalido.", reintentos, &list[i].price);
+	  					  			GetFloatNumberWithRange("\nIngrese el precio: ", "\nError. Precio invalido.", reintentos,10,50000, &list[index].price);
 	  					  			break;
 	  					  		 case 4:
-	  					  			 GetIntNumber("Ingrese el tipo de pasajero: (1 - Bussines, 2 - Economy, 3 - VIP)", "\nError. Tipo ingreso invalido.", reintentos, &list[i].typePassenger);
+	  					  			 GetIntNumber("Ingrese el tipo de pasajero: (1 - Bussines, 2 - Economy, 3 - VIP)", "\nError. Tipo ingreso invalido.", reintentos, &list[index].typePassenger);
 	  					  			 break;
 	  					  		 case 5:
-	  					  			GetStringAlfaNum("Ingrese el codigo de vuelo del pasajero: ", "\nError. Codigo invalido.", list[i].flyCode, sizeof(list[i].flyCode), reintentos);
+	  					  			GetStringAlfaNum("Ingrese el codigo de vuelo del pasajero: ", "\nError. Codigo invalido.", list[index].flyCode, sizeof(list[index].flyCode), reintentos);
 	  					  			break;
 	  					  		 }
+	  				ConfirmarContinuar("¿Desea modificar otro dato?(SI/NO): ", "\nError. Vuelva a intentarlo", &continuar, reintentos);
+					if (continuar == 0) {
+						datosCambiados = 1;
+						printf("\nPASAJERO MODIFICADO CORRECTAMENTE.\n");
+						printf("\nDatos de los pasajeros:\n\n%-5s %-20s %-20s %-20s %-20s %-20s %-25s\n", "ID", "Nombre", "Apellido", "TipoPasajero", "Precio", "EstadoDelVuelo", "CodigoDeVuelo");
+						printSinglePassenger(list[index]);
+					}
 	  			}else{
+	  				printf("\nNO SE SELECCIONO NINGUNA OPCION CORRECTA.\n\n");
+	  				printf("\n***SE REGRESA AL MENU PRINCIPAL****\n\n");
 	  				opcion = 6;
 	  			}
-	  		ConfirmarContinuar("¿Desea modificar otro dato? ", "\nError. Vuelva a intentarlo", &continuar, reintentos);
-	  		if(continuar==0){
-	  	  	  datosCambiados = 1;
-	  		}
-	  		}while(opcion >= 6 || continuar == 1 );
+	  		}while(opcion != 6 && datosCambiados == 0 );
+	  	  }else{
+	  		  printf("\nEL ID INGRESADO NO SE ENCUENTRA EN LA BASE.\n\n");
+	  		  printf("\n***SE REGRESA AL MENU PRINCIPAL****\n\n");
 	  	  }
-	    }
-		datosCambiados = 1;
 	  }
-  	  }
+  }
   return datosCambiados;
 }
-
 
 int findPassengerById(Passengers list[], int len, int id, int* index){
 	int i;
@@ -269,7 +291,6 @@ int findPassengerById(Passengers list[], int len, int id, int* index){
 	}
 	return clienteExiste;
 }
-
 
 int removePassenger(Passengers list[], int len, int id, int index){
 	int pasajeroEliminado;
@@ -292,11 +313,11 @@ int passengerDischarge(Passengers list[], int len, int reintentos){
 	int confirmarBaja;
 	if(list != NULL && len > 0 ){
 		printPassenger(list, len);
-		validacionCorrecta = GetIntNumber("Ingrese el ID del pasajero que quiere dar de baja", "\Error. ID invalido", reintentos, &idPasajero);
+		validacionCorrecta = GetIntNumber("Ingrese el ID del pasajero que quiere dar de baja: ", "\nError. ID invalido\n", reintentos, &idPasajero);
 		if(validacionCorrecta == 1 && findPassengerById(list, len, idPasajero, &index) == 1){
 			printf("\nPasajero que se dara de baja:\n\n%-5s %-20s %-20s %-20s %-20s %-20s %-25s\n", "ID", "Nombre", "Apellido", "TipoPasajero", "Precio", "EstadoDelVuelo", "CodigoDeVuelo");
 			printSinglePassenger(list[index]);
-	  		ConfirmarContinuar("\n¿Confirma la baja del pasajero?: ", "\nError. Vuelva a intentarlo", &confirmarBaja, reintentos);
+	  		ConfirmarContinuar("\n¿Confirma la baja del pasajero? (SI/NO): ", "\nError. Vuelva a intentarlo", &confirmarBaja, reintentos);
 			if(confirmarBaja == 1){
 			  removePassenger(list, len, idPasajero, index);
 			  printf("\nPasajero dado de baja correctamente");
@@ -419,7 +440,7 @@ int printSubMenuReport(Passengers list[], int len, int reintentos){
 					"\n2.Total y Promedio de los precios de los pasajes"
 					"\n3.Listado de los pasajeros por Codigo de vuelo y estado de vuelo 'ACTIVO'"
 					"\n4.Salir\n");
-			opcionCorrecta = PedirNumConRango("\nElija el informe que desea mostrar: ", "\nERROR. Opcion invalida.", reintentos, 1, 5, &opcion);
+			opcionCorrecta = GetNumberWithRange("\nElija el informe que desea mostrar: ", "\nERROR. Opcion invalida.", reintentos, 1, 5, &opcion);
 			if (opcionCorrecta == 1) {
 				validacion = 1;
 				switch (opcion) {
@@ -478,27 +499,33 @@ void TotalAvaragePrice(Passengers list[], int len){
 
 int cargaForzada(Passengers list[], int len, int* id){
 	int i;
+	int j;
 	int idAux;
 	int cantidadDePasajeros;
 	int cargaExitosa;
-	Passengers auxPassager;
+	char nombres[5][50] = {"Mariela", "Juan Pablo", "Mauro", "Yolanda", "Fabio"};
+	char apellidos[5][50] = {"Gomez","Martinez","Gomez","Alberdi","Benitez"};
+	float precios[5] = {20000,30000, 18000, 32000, 45000};
+	char codigoVuelo[5][50] = {"AA200","LA201","AA200","LA200","AA220"};
+	int tipoPasajeros[5] = {1,2,2,1,2};
+	int estadoVuelos[5] = {1,1,1,2,3};
 
 	cargaExitosa = 0;
 	cantidadDePasajeros = 5;
 	idAux = *id;
+
 	if (len > cantidadDePasajeros){
 		for (i = 0; i<len; i++){
 			if(list[i].isEmpty == 1 && i<cantidadDePasajeros){
-				idAux++;
-				addPaseenger(list, len, idAux, "PasajeroX", "ApellizoZ", 1000, 1, "AA00");
+				for(j = 0; j<5; j++){
+					idAux++;
+					addPaseenger(list, len, idAux, nombres[j], apellidos[j], precios[j], tipoPasajeros[j], codigoVuelo[j], estadoVuelos[j]);
+				}
 				cargaExitosa = 1;
 			}
 		}
 	}
-
 	*id = idAux;
-
 	return cargaExitosa;
-
 }
 

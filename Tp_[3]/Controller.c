@@ -77,38 +77,6 @@ int controller_addPassenger(LinkedList* pArrayListPassenger)
 	return cargaCorrecta;
 }
 
-/** \brief Modificar datos de pasajero
- *
- * \param path char*
- * \param pArrayListPassenger LinkedList*
- * \return int
- *
- */
-int controller_editPassenger(LinkedList* pArrayListPassenger)
-{	int idPassenger;
-	int numeroValido;
-	Passenger *auxPassenger = NULL;
-	int index;
-	int idExiste;
-
-	controller_ListPassenger(pArrayListPassenger);
-	numeroValido = GetIntNumber("\nIndique el id del pasajero que desea modificar los datos: ", "ERROR. Id invalido.", 3, &idPassenger);
-	if (numeroValido == 1){
-		idExiste = GetIndexPassenger_ById(pArrayListPassenger, &index,idPassenger);
-		if(idExiste == 1){
-			auxPassenger = ll_get(pArrayListPassenger, index);
-			if(auxPassenger != NULL){
-				if(ModificarDatosPasajero(auxPassenger, idPassenger)== 1){
-					ll_set(pArrayListPassenger, index, auxPassenger);
-				}
-			}
-		}else{
-			printf("ERROR. El id indicado no existe.");
-		}
-	}
-
-    return 1;
-}
 
 /** \brief Baja de pasajero
  *
@@ -160,6 +128,39 @@ int controller_ListPassenger(LinkedList* pArrayListPassenger)
 
 	}
 
+
+    return 1;
+}
+
+/** \brief Modificar datos de pasajero
+ *
+ * \param path char*
+ * \param pArrayListPassenger LinkedList*
+ * \return int
+ *
+ */
+int controller_editPassenger(LinkedList* pArrayListPassenger)
+{	int idPassenger;
+	int numeroValido;
+	Passenger *auxPassenger = NULL;
+	int index;
+	int idExiste;
+
+	controller_ListPassenger(pArrayListPassenger);
+	numeroValido = GetIntNumber("\nIndique el id del pasajero que desea modificar los datos: ", "ERROR. Id invalido.", 3, &idPassenger);
+	if (numeroValido == 1){
+		idExiste = GetIndexPassenger_ById(pArrayListPassenger, &index,idPassenger);
+		if(idExiste == 1){
+			auxPassenger = ll_get(pArrayListPassenger, index);
+			if(auxPassenger != NULL){
+				if(ModificarDatosPasajero(auxPassenger, idPassenger)== 1){
+					ll_set(pArrayListPassenger, index, auxPassenger);
+				}
+			}
+		}else{
+			printf("ERROR. El id indicado no existe.");
+		}
+	}
 
     return 1;
 }

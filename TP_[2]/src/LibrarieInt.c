@@ -70,13 +70,37 @@ int CalcularPromedio(float numDividendo, float numDivisor, float* resultado){
 }
 
 
-int PedirNumConRango(char mensaje[],char mensajeError[], int reintentos , int min, int max, int* numeroIngresado) {
+int GetNumberWithRange(char mensaje[],char mensajeError[], int reintentos , int min, int max, int* numeroIngresado) {
 	int validacion;
 	int numero;
 
 	validacion = 0;
 	do {
 		if(GetIntNumber(mensaje, mensajeError, reintentos, &numero) == 1){
+			*numeroIngresado = numero;
+		}
+		if (ValidarRango(numero, min, max) == 1){
+			validacion = 1;
+			break;
+		}else{
+			reintentos--;
+		}
+		if(reintentos > 0){
+			printf("%s", mensajeError);
+		}
+	} while (ValidarRango(numero, min, max) == 0 && reintentos > 0 );
+
+	return validacion;
+}
+
+
+int GetFloatNumberWithRange(char mensaje[],char mensajeError[], int reintentos , int min, int max, float* numeroIngresado) {
+	int validacion;
+	float numero;
+
+	validacion = 0;
+	do {
+		if(GetFloatNumber(mensaje, mensajeError, reintentos, &numero) == 1){
 			*numeroIngresado = numero;
 		}
 		if (ValidarRango(numero, min, max) == 1){
