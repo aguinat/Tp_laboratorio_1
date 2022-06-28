@@ -370,7 +370,7 @@ int sortPassengers(Passengers list[], int len, int order){
 			}while(estaOrdenado == 0 );
 		}
 	if(estaOrdenado == 1){
-		printf("\n***Datos ordenados****\n");
+		printf("\n****Datos ordenados****\n");
 		printPassenger(list, len);
 	}
 	return estaOrdenado;
