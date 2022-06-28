@@ -63,7 +63,7 @@ int main(void) {
 						break;
 					case 4:
 						if(existenPasajeros == 1){
-							printSubMenuReport(passager, LEN, REIN);
+							printSubMenuReport(passager, LEN, 3);
 						}else{
 							printf("NO EXISTEN DATOS CARGADOS. \n\n");
 						}

@@ -440,7 +440,7 @@ int printSubMenuReport(Passengers list[], int len, int reintentos){
 					"\n2.Total y Promedio de los precios de los pasajes"
 					"\n3.Listado de los pasajeros por Codigo de vuelo y estado de vuelo 'ACTIVO'"
 					"\n4.Salir\n");
-			opcionCorrecta = GetNumberWithRange("\nElija el informe que desea mostrar: ", "\nERROR. Opcion invalida.", reintentos, 1, 5, &opcion);
+			opcionCorrecta = GetNumberWithRange("\nElija el informe que desea mostrar: ", "\nERROR. Opcion invalida.", reintentos, 1, 4, &opcion);
 			if (opcionCorrecta == 1) {
 				validacion = 1;
 				switch (opcion) {
@@ -457,6 +457,7 @@ int printSubMenuReport(Passengers list[], int len, int reintentos){
 			}else{
 				opcion = 4;
 				printf("\nNo se ingreso ninguna opcion valida.\n");
+				printf("\n****SE REGRESA AL MENU PRINCIPAL****.\n\n");
 			}
 		}while(opcion != 4);
 

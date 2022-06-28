@@ -20,6 +20,7 @@ int GetIntNumber(char mensaje[], char mensajeError[],int reintentos, int* numero
 				validacion = 1;
 				break;
 			}else{
+				reintentos--;
 				printf("%s", mensajeError);
 				fflush(stdin);
 			}
