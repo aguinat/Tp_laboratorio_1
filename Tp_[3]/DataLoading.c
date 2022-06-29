@@ -7,7 +7,7 @@
 #define FIRSTCLASS 1
 #define ENCONOMY 2
 #define EXECUTIVE 3
-#define REIN 3
+#define REIN 4
 #define MAX_PRICE 10000
 #define ATERRIZADO 1
 #define HORARIO 2
@@ -16,15 +16,11 @@
 
 int getPalabra(char palabra[], char mensaje[], char mensajeErrorFinal[]){
 	int palabraCorrecta;
-	int lenPalabra;
+	int lenPalabra = 50;
 	palabraCorrecta = 0;
-	int returnA;
+	char auxPalabra[lenPalabra];
 
 	if(palabra != NULL){
-		lenPalabra = sizeof(&palabra);
-		char auxPalabra[lenPalabra];
-		returnA = GetLetters(mensaje, "ERROR.\n", auxPalabra, lenPalabra, REIN);
-		printf("%d\n", returnA);
 		if (GetLetters(mensaje, "ERROR.\n", auxPalabra, lenPalabra, REIN)== 1){
 			strcpy(palabra,auxPalabra);
 			palabraCorrecta = 1;
@@ -198,15 +194,15 @@ int getStr_PassegerType(char passegerTypeStr[], int passegerTypeNum){
 	if (passegerTypeStr != NULL && passegerTypeNum > 0) {
 		switch (passegerTypeNum) {
 		case 1:
-			strcpy(passegerTypeStr, "First Class");
+			strcpy(passegerTypeStr, "FirstClass");
 			tipoValido = 1;
 			break;
 		case 2:
-			strcpy(passegerTypeStr, "Economy Class");
+			strcpy(passegerTypeStr, "EconomyClass");
 			tipoValido = 1;
 			break;
 		case 3:
-			strcpy(passegerTypeStr, "Executive Class");
+			strcpy(passegerTypeStr, "ExecutiveClass");
 			tipoValido = 1;
 			break;
 		}

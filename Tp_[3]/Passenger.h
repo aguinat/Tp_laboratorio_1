@@ -14,7 +14,7 @@ typedef struct
 }Passenger;
 
 Passenger* Passenger_new();
-Passenger* Passenger_newParametros(int* idStr,char* nombreStr,int* tipoPasajero, char* apellidoStr, float* precio, char* codigoVuelo, int* estadoVuelo);
+Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* tipoPasajero, char* apellidoStr, char* precio, char* codigoVuelo, char* estadoVuelo);
 void Passenger_delete(Passenger* this);
 
 int Passenger_setId(Passenger* this,int id);
@@ -39,9 +39,14 @@ int Passenger_setEstadoVuelo(Passenger* this,int estadoVuelo);
 int Passenger_getEstadoVuelo(Passenger* this,int* estadoVuelo);
 
 Passenger* Passenger_getFromUser(int* cargaCorrecta, int* id);
-int GetLastId_LinkedList(LinkedList* pArrayListPassenger);
-int ModificarDatosPasajero(Passenger* this, int id);
-int GetIndexPassenger_ById(LinkedList* pArrayListPassenger, int* index, int id);
+int ModificarDatosPasajero(Passenger* this);
+Passenger* GetPassenger_ById(LinkedList* pArrayListPassenger, int id, int* index);
 void MostrarUnPasajero(Passenger* this);
+
+int Passenger_sortByApellido(void* pasajeroUno, void* pasajeroDos);
+int Passenger_sortByPrecio(void* pasajeroUno, void* pasajeroDos);
+int Passenger_sortByTipoPasajero(void* pasajeroUno, void* pasajeroDos);
+int Passenger_sortByEstadoVuelo(void* pasajeroUno, void* pasajeroDos);
+
 
 #endif /* PASSENGER_H_ */

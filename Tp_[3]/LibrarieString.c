@@ -16,7 +16,7 @@ int getString(char vectorCadena[], int tamCadena){
 			if(auxCadena[strnlen(auxCadena, sizeof(auxCadena)) - 1] == '\n'){
 				auxCadena[strnlen(auxCadena, sizeof(auxCadena)) - 1] = '\0';
 			}
-			if (strlen(auxCadena)+1 <= tamCadena) {
+			if (strlen(auxCadena)+1 <= tamCadena && strlen(auxCadena)>0) {
 				strncpy(vectorCadena, auxCadena, tamCadena);
 				validacion = 1;
 			}
@@ -39,6 +39,7 @@ int GetLetters(char mensaje[], char mensajeError[], char vectorCadena[], int tam
 			} else {
 				printf("%s", mensajeError);
 				fflush(stdin);
+				reintentos--;
 			}
 
 		}

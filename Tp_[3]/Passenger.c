@@ -10,9 +10,12 @@
 #define MAX_STATUSFLIGHT 4
 #define LENPALABRA 50
 #define LEN_CODE 7
-#define REIN 3
+#define REIN 4
 #define LINEA_ARCHIVO 7
 #define MAX_PRICE 50000
+#define FIRSTCLASS 1
+#define ENCONOMY 2
+#define EXECUTIVE 3
 
 int Passenger_setId(Passenger* this,int id){
 	int setCorrecto;
@@ -174,6 +177,7 @@ int Passenger_getEstadoVuelo(Passenger* this,int* estadoVuelo){
 	return getCorrecto;
 }
 
+
 void Passenger_delete(Passenger* this){
 	if(this != NULL){
 		free(this);
@@ -183,23 +187,31 @@ void Passenger_delete(Passenger* this){
 Passenger* Passenger_new(){
 	Passenger* auxPassenger = NULL;
 	auxPassenger = (Passenger*)malloc(sizeof(Passenger));
-
+		Passenger_setId(auxPassenger, 0);
+		Passenger_setApellido(auxPassenger, "");
+		Passenger_setNombre(auxPassenger, "");
+		Passenger_setCodigoVuelo(auxPassenger, 0);
 	return auxPassenger;
 }
 
-Passenger* Passenger_newParametros(int* idStr,char* nombreStr,int* tipoPasajero, char* apellidoStr, float* precio, char* codigoVuelo, int* estadoVuelo){
+Passenger* Passenger_newParametros(char* idStr,char* nombreStr,char* tipoPasajero, char* apellidoStr, char* precio, char* codigoVuelo, char* estadoVuelo){
+	int statusNumFlight;
+	int typePassengerNum;
 	Passenger* auxPassenger = NULL;
 	auxPassenger = Passenger_new();
 
 	if(auxPassenger !=NULL){
 		if(idStr != NULL && nombreStr != NULL && tipoPasajero != NULL && apellidoStr != NULL && precio != NULL && codigoVuelo != NULL && estadoVuelo != NULL){
-			Passenger_setId(auxPassenger, *idStr);
+			getNum_StatusFlight(estadoVuelo, &statusNumFlight);
+			getNum_PassegerType(tipoPasajero, &typePassengerNum);
+
+			Passenger_setId(auxPassenger, atoi(idStr));
 			Passenger_setNombre(auxPassenger, nombreStr);
 			Passenger_setApellido(auxPassenger, apellidoStr);
 			Passenger_setCodigoVuelo(auxPassenger, codigoVuelo);
-			Passenger_setPrecio(auxPassenger, *precio);
-			Passenger_setTipoPasajero(auxPassenger, *tipoPasajero);
-			Passenger_setEstadoVuelo(auxPassenger, *estadoVuelo);
+			Passenger_setPrecio(auxPassenger, atof(precio));
+			Passenger_setTipoPasajero(auxPassenger, typePassengerNum);
+			Passenger_setEstadoVuelo(auxPassenger, statusNumFlight);
 		}else{
 			Passenger_delete(auxPassenger);
 			auxPassenger = NULL;
@@ -217,7 +229,11 @@ Passenger* Passenger_getFromUser(int* cargaCorrecta, int* id){
 	char auxNombre[LENPALABRA];
 	char auxApellido[LENPALABRA];
 	char auxCodigo[LEN_CODE];
+	char idStr[50];
 	float auxPrecio;
+	char precioStr[50];
+	char tipoPasajeroStr[50];
+	char estadoVueloStr[50];
 	int auxTipoPasajero;
 	int auxEstadoVuelo;
 	Passenger* auxPassenger = NULL;
@@ -227,28 +243,35 @@ Passenger* Passenger_getFromUser(int* cargaCorrecta, int* id){
 
 	if (cargaCorrecta != NULL) {
 		do {
-			if (getPalabra(auxNombre, "Ingrese su nombre: \n", "ERROR. Nombre invalido.\n") == 0) {
+			if (getPalabra(auxNombre, "Ingrese su nombre: ", "ERROR. Nombre invalido.\n") == 0) {
 				datoIncorrecto = 1;
 			}
-			if (getPalabra(auxApellido, "Ingrese su apellido: \n","ERROR. Apellido invalido.\n") == 0) {
+			if (datoIncorrecto!= 1 && getPalabra(auxApellido, "Ingrese su apellido: ","ERROR. Apellido invalido.\n") == 0) {
 				datoIncorrecto = 1;
 			}
-			if (getCodigoVuelo(auxCodigo, LEN_CODE) == 0) {
+			if (datoIncorrecto!= 1 && getCodigoVuelo(auxCodigo, LEN_CODE) == 0) {
 				datoIncorrecto = 1;
 			}
-			if (getPrice(&auxPrecio) == 0) {
+			if (datoIncorrecto!= 1 && getPrice(&auxPrecio) == 1) {
+				sprintf(precioStr,"%f", auxPrecio);
+			}else{
 				datoIncorrecto = 1;
 			}
-			if (getPassegerType(&auxTipoPasajero) == 0) {
+			if (datoIncorrecto!= 1 && getPassegerType(&auxTipoPasajero) == 1) {
+				getStr_PassegerType(tipoPasajeroStr, auxTipoPasajero);
+			}else{
 				datoIncorrecto = 1;
 			}
-			if (getStatusFlight(&auxEstadoVuelo) == 0) {
+			if (datoIncorrecto!= 1 && getStatusFlight(&auxEstadoVuelo) == 1) {
+				getStr_StatusFlight(estadoVueloStr, auxEstadoVuelo);
+			}else{
 				datoIncorrecto = 1;
 			}
 			if (datoIncorrecto != 1) {
 				ConfirmarContinuar("Confirme la carga del pasajero (SI/NO): ","Ingrese una respuesta valida", &confirma, REIN);
 				if (confirma == 1) {
-					auxPassenger = Passenger_newParametros(id, auxNombre, &auxTipoPasajero, auxApellido, &auxPrecio, auxCodigo, &auxEstadoVuelo);
+					sprintf(idStr,"%d", *id);
+					auxPassenger = Passenger_newParametros(idStr, auxNombre, tipoPasajeroStr, auxApellido, precioStr, auxCodigo, estadoVueloStr);
 					if(auxPassenger != NULL){
 						cargaCompleta = 1;
 					}
@@ -262,29 +285,6 @@ Passenger* Passenger_getFromUser(int* cargaCorrecta, int* id){
 
 	*cargaCorrecta = cargaCompleta;
 	return auxPassenger;
-}
-
-int GetLastId_LinkedList(LinkedList* pArrayListPassenger){
-	int id;
-	int maxId;
-	int largoDeLista;
-	Passenger *auxPassenger = NULL;
-	maxId = 0;
-
-	if(pArrayListPassenger != NULL){
-		largoDeLista = ll_len(pArrayListPassenger);
-		if (largoDeLista > 0) {
-			for (int i = 0; i < largoDeLista; i++) {
-				auxPassenger = ll_get(pArrayListPassenger, i);
-				Passenger_getId(auxPassenger, &id);
-				if(id>maxId){
-					maxId = id;
-				}
-			}
-		}
-	}
-
-	return maxId;
 }
 
 void MostrarUnPasajero(Passenger* this){
@@ -320,20 +320,20 @@ void MostrarUnPasajero(Passenger* this){
 
 }
 
-int ModificarDatosPasajero(Passenger* this, int id){
+int ModificarDatosPasajero(Passenger* this){
 	int opcionCorrecta;
 	int opcion;
-	int datoIncorrecto;
 	int confirma;
-	int cargaCompleta;
+	int datosModifcados;
 	char auxNombre[50];
 	char auxApellido[50];
 	char auxCodigo[50];
 	float auxPrecio;
 	int auxTipoPasajero;
 	int auxEstadoVuelo;
+	Passenger* auxPassenger = this;
 
-	datoIncorrecto = 0;
+	datosModifcados =  0;
 	do{
 		opcionCorrecta = GetNumberWithRange(
 				"\n1: Nombre"
@@ -347,67 +347,102 @@ int ModificarDatosPasajero(Passenger* this, int id){
 		if(opcionCorrecta==1){
 			switch (opcion) {
 			case 1:
-				if (getPalabra(auxNombre, "\nIngrese el nombre del pasajero: ","\nERROR. Nombre invalido.\n") == 0) {
-					printf("Error. No se pudo guardar correctamente el nombre del pasajero.\n");
-					datoIncorrecto = 1;
+				if (getPalabra(auxNombre, "\nIngrese el nombre del pasajero: ","\nERROR. Nombre invalido.\n") == 1) {
+					Passenger_setNombre(auxPassenger, auxNombre);
+					printf("Pasajero luego de la modificacion:\n");
+					printf("\nDatos del pasajero:\n\n%-5s %-15s %-20s %-20s %-15s %-20s %-20s\n\n","ID", "Nombre", "Apellido", "Codigo Vuelo", "Precio","Tipo Pasajero", "Estado Vuelo");
+					MostrarUnPasajero(auxPassenger);
+					ConfirmarContinuar("¿Confirma el dato modificado? (SI/NO) ", "\nError. Vuelva a intentarlo", &confirma, REIN);
+					if(confirma == 1){
+						Passenger_setNombre(this, auxNombre);
+						datosModifcados = 1;
+					}
 				}
 				break;
 			case 2:
-				if (getPalabra(auxApellido, "Ingrese el apellido del pasajero: \n","ERROR. Apellido invalido.\n")== 0) {
-					printf("Error.No se pudo guardar correctamente el apellido del pasajero.\n");
-					datoIncorrecto = 1;
+				if (getPalabra(auxApellido, "Ingrese el apellido del pasajero: \n","ERROR. Apellido invalido.\n")== 1) {
+					Passenger_setApellido(auxPassenger, auxApellido);
+					printf("Pasajero luego de la modificacion:\n\n");
+					printf("\n\nDatos del pasajero:\n\n%-5s %-15s %-20s %-20s %-15s %-20s %-20s\n\n","ID", "Nombre", "Apellido", "Codigo Vuelo", "Precio","Tipo Pasajero", "Estado Vuelo");
+					MostrarUnPasajero(auxPassenger);
+					ConfirmarContinuar("¿Confirma el dato modificado? (SI/NO) ", "\nError. Vuelva a intentarlo", &confirma, REIN);
+					if (confirma == 1) {
+						Passenger_setApellido(this, auxApellido);
+						datosModifcados = 1;
+					}
 				}
 				break;
 			case 3:
-				if(getPrice(&auxPrecio) == 0){
-					datoIncorrecto = 1;
+				if(getPrice(&auxPrecio) == 1){
+					Passenger_setPrecio(auxPassenger, auxPrecio);
+					printf("Pasajero luego de la modificacion:\n\n");
+					printf("\n\nDatos del pasajero:\n\n%-5s %-15s %-20s %-20s %-15s %-20s %-20s\n\n","ID", "Nombre", "Apellido", "Codigo Vuelo", "Precio","Tipo Pasajero", "Estado Vuelo");
+					MostrarUnPasajero(auxPassenger);
+					ConfirmarContinuar("¿Confirma el dato modificado? (SI/NO) ", "\nError. Vuelva a intentarlo", &confirma, REIN);
+					if (confirma == 1) {
+						Passenger_setPrecio(this, auxPrecio);
+						datosModifcados = 1;
+					}
 				}
 				break;
 			case 4:
-				if(getPassegerType(&auxTipoPasajero) == 0){
-					datoIncorrecto = 1;
+				if(getPassegerType(&auxTipoPasajero) == 1){
+					Passenger_setTipoPasajero(auxPassenger, auxTipoPasajero);
+					printf("Pasajero luego de la modificacion:\n\n");
+					printf("\n\nDatos del pasajero:\n\n%-5s %-15s %-20s %-20s %-15s %-20s %-20s\n\n","ID", "Nombre", "Apellido", "Codigo Vuelo", "Precio","Tipo Pasajero", "Estado Vuelo");
+					MostrarUnPasajero(auxPassenger);
+					ConfirmarContinuar("¿Confirma el dato modificado? (SI/NO) ","\nError. Vuelva a intentarlo", &confirma, REIN);
+					if (confirma == 1) {
+						Passenger_setTipoPasajero(this, auxTipoPasajero);
+						datosModifcados = 1;
+					}
 				}
 				break;
 			case 5:
-				if(getPrice(&auxPrecio) == 0){
-					datoIncorrecto = 1;
+				if(getCodigoVuelo(auxCodigo, LEN_CODE) == 1){
+					Passenger_setCodigoVuelo(auxPassenger, auxCodigo);
+					printf("Pasajero luego de la modificacion:\n\n");
+					printf("\n\nDatos del pasajero:\n\n%-5s %-15s %-20s %-20s %-15s %-20s %-20s\n\n","ID", "Nombre", "Apellido", "Codigo Vuelo", "Precio","Tipo Pasajero", "Estado Vuelo");
+					MostrarUnPasajero(auxPassenger);
+					ConfirmarContinuar("¿Confirma el dato modificado? (SI/NO) ","\nError. Vuelva a intentarlo", &confirma, REIN);
+					if (confirma == 1) {
+						Passenger_setCodigoVuelo(this, auxCodigo);
+						datosModifcados = 1;
+					}
 				}
 				break;
 			case 6:
-				if(getStatusFlight(&auxEstadoVuelo) == 0){
-					datoIncorrecto = 1;
+				if(getStatusFlight(&auxEstadoVuelo) == 1){
+					Passenger_setEstadoVuelo(auxPassenger, auxEstadoVuelo);
+					printf("Pasajero luego de la modificacion:\n\n");
+					printf("\n\nDatos del pasajero:\n\n%-5s %-15s %-20s %-20s %-15s %-20s %-20s\n\n","ID", "Nombre", "Apellido", "Codigo Vuelo", "Precio","Tipo Pasajero", "Estado Vuelo");
+					MostrarUnPasajero(auxPassenger);
+					ConfirmarContinuar("¿Confirma el dato modificado? (SI/NO) ","\nError. Vuelva a intentarlo", &confirma, REIN);
+					if (confirma == 1) {
+						Passenger_setEstadoVuelo(this, auxEstadoVuelo);
+						datosModifcados = 1;
+					}
 				}
 				break;
 			}
-			ConfirmarContinuar("¿Desea modificar otro dato? ", "\nError. Vuelva a intentarlo", &confirma, REIN);
-			if (confirma==0  && datoIncorrecto != 1) {
-				this = Passenger_newParametros(&id, auxNombre, &auxTipoPasajero, auxApellido, &auxPrecio, auxCodigo, &auxEstadoVuelo);
-				if (this != NULL) {
-					cargaCompleta = 1;
-					printf("Datos modificados correctamente.\n");
-				}
-			}else{
-				if(datoIncorrecto == 1){
-					printf("\nUno o mas datos no fueron cargados correctamente.");
-					ConfirmarContinuar("\n¿Quiere volver a reingresar los datos?: (SI/NO)", "\nIngrese una respuesta valida. ", &confirma, REIN);
-				}
+			ConfirmarContinuar("¿Desea modificar otro dato? (SI/NO) ", "\nError. Vuelva a intentarlo", &confirma, REIN);
+			if (confirma==0) {
 			}
+				printf("\nDATOS MODIFICADOS CORRECTAMENTE.\n\n");
 		}else{
 			opcion = 7;
 		}
 	}while(opcion != 7 && confirma == 1) ;
 
-	return cargaCompleta;
+	return datosModifcados;
 }
 
-
-int GetIndexPassenger_ById(LinkedList* pArrayListPassenger, int* index, int id){
+Passenger* GetPassenger_ById(LinkedList* pArrayListPassenger, int id, int* index){
 	int largoDeLista;
-	int idExiste;
 	int idAux;
 	Passenger * auxPassenger = NULL;
 
-	idExiste = 0;
+	*index = -1;
 	largoDeLista = ll_len(pArrayListPassenger);
 	if (largoDeLista > 0) {
 		for (int i = 0; i < largoDeLista; i++) {
@@ -415,10 +450,108 @@ int GetIndexPassenger_ById(LinkedList* pArrayListPassenger, int* index, int id){
 			Passenger_getId(auxPassenger, &idAux);
 			if (id == idAux) {
 				*index = i;
-				idExiste = 1;
+				break;
 			}
 		}
 	}
 
-	return idExiste;
+	return auxPassenger;
 }
+
+
+int Passenger_sortByApellido(void* pasajeroUno, void* pasajeroDos){
+	int retorno;
+	char auxParamUno[100];
+	char auxParamDos[100];
+	char auxNombreUno[100];
+	char auxNombreDos[100];
+
+	if(pasajeroUno != NULL && pasajeroUno != NULL){
+		Passenger_getApellido(pasajeroUno, auxParamUno);
+		Passenger_getApellido(pasajeroDos, auxParamDos);
+		retorno = strcmp(auxParamUno, auxParamDos);
+		if(retorno == 0){
+			Passenger_getNombre(pasajeroUno, auxNombreUno);
+			Passenger_getNombre(pasajeroDos, auxNombreDos);
+			retorno = strcmp(auxNombreUno, auxNombreDos);
+		}
+	}
+
+	return retorno;
+}
+
+int Passenger_sortByPrecio(void* pasajeroUno, void* pasajeroDos){
+	int retorno;
+	float precio1;
+	float precio2;
+	Passenger *auxPasajeroUno;
+	Passenger *auxPasajeroDos;
+	auxPasajeroUno = (Passenger*) pasajeroUno;
+	auxPasajeroDos = (Passenger*) pasajeroDos;
+
+	retorno = 0;
+	if(pasajeroUno != NULL && pasajeroUno != NULL){
+		Passenger_getPrecio(auxPasajeroUno, &precio1);
+		Passenger_getPrecio(auxPasajeroDos, &precio2);
+		if(precio1 > precio2){
+			retorno = 1;
+		}else if(precio2 > precio1){
+			retorno = -1;
+		}
+	}
+
+	return retorno;
+}
+
+int Passenger_sortByTipoPasajero(void* pasajeroUno, void* pasajeroDos){
+	int retorno;
+	int tipoPasajeroUno;
+	int tipoPasajeroDos;
+	Passenger* auxPasajeroUno;
+	Passenger* auxPasajeroDos;
+	auxPasajeroUno = (Passenger*) pasajeroUno;
+	auxPasajeroDos = (Passenger*) pasajeroDos;
+
+	retorno = 0;
+	if(pasajeroUno != NULL && pasajeroUno != NULL){
+		Passenger_getTipoPasajero(auxPasajeroUno, &tipoPasajeroUno);
+		Passenger_getTipoPasajero(auxPasajeroDos, &tipoPasajeroDos);
+		if (tipoPasajeroUno > tipoPasajeroDos) {
+			retorno = 1;
+		} else if (tipoPasajeroDos > tipoPasajeroUno) {
+			retorno = -1;
+		}
+	}
+
+	return retorno;
+}
+
+int Passenger_sortByEstadoVuelo(void* pasajeroUno, void* pasajeroDos){
+	int retorno;
+	int estadoVueloUno;
+	int estadoVueloDos;
+	Passenger* auxPasajeroUno;
+	Passenger* auxPasajeroDos;
+	auxPasajeroUno = (Passenger*) pasajeroUno;
+	auxPasajeroDos = (Passenger*) pasajeroDos;
+
+	retorno = 0;
+	if(pasajeroUno != NULL && pasajeroUno != NULL) {
+		Passenger_getEstadoVuelo(auxPasajeroUno, &estadoVueloUno);
+		Passenger_getEstadoVuelo(auxPasajeroDos, &estadoVueloDos);
+		if (estadoVueloUno > estadoVueloDos) {
+			retorno = 1;
+		} else if (estadoVueloDos < estadoVueloUno) {
+			retorno = -1;
+		}
+	}
+
+	return retorno;
+}
+
+
+
+
+
+
+

@@ -83,8 +83,10 @@ int GetNumberWithRange(char mensaje[],char mensajeError[], int reintentos , int 
 			validacion = 1;
 			break;
 		}else{
-			printf("%s", mensajeError);
 			reintentos--;
+		}
+		if(reintentos > 0){
+			printf("%s", mensajeError);
 		}
 	} while (ValidarRango(numero, min, max) == 0 && reintentos > 0 );
 

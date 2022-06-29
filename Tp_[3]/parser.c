@@ -16,41 +16,26 @@ int parser_PassengerFromText(FILE* pFile , LinkedList* pArrayListPassenger)
 {
 	Passenger* auxPassenger = NULL;
 	char idStr[50];
-	int id;
-	float price;
 	char nombre[50];
 	char apellido[50];
 	char priceStr[50];
 	char flyCode[50];
 	char typePassenger[50];
 	char statusFlight[50];
-	int statusNumFlight;
-	int statusExist;
-	int typePassengerNum;
-	int typePassengerExist;
 	int elementosDeLinea;
 	int cargaCompleta;
 
 	cargaCompleta = 1;
-
 
 	if (pFile != NULL) {
 		fscanf(pFile,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",idStr,nombre,apellido,priceStr,flyCode,typePassenger,statusFlight);
 		do{
 			elementosDeLinea = fscanf(pFile,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n",idStr,nombre,apellido,priceStr,flyCode,typePassenger,statusFlight);
 			if(elementosDeLinea == LINEA_ARCHIVO){
-				id = atoi(idStr);
-				price = atof(priceStr);
-				statusExist = getNum_StatusFlight(statusFlight, &statusNumFlight);
-				typePassengerExist = getNum_PassegerType(typePassenger, &typePassengerNum);
-				if(statusExist==1 && id>0 && typePassengerExist > 0 && price>0){
-					auxPassenger = Passenger_newParametros(&id, nombre, &typePassengerNum, apellido, &price, flyCode, &statusNumFlight);
-					if(auxPassenger!= NULL){
-						ll_add(pArrayListPassenger, auxPassenger);
-					}else{
-						cargaCompleta = 0;
-					}
-				}else{
+				auxPassenger = Passenger_newParametros(idStr, nombre,typePassenger, apellido, priceStr, flyCode,statusFlight);
+				if (auxPassenger != NULL) {
+					ll_add(pArrayListPassenger, auxPassenger);
+				} else {
 					cargaCompleta = 0;
 				}
 			}
@@ -85,18 +70,38 @@ int parser_PassengerFromBinary(FILE* pFile , LinkedList* pArrayListPassenger)
 		do{
 			auxPassenger = Passenger_new();
 			if(auxPassenger != NULL){
-				cantidad = fread(auxPassenger, sizeof(Passenger), 1, pFile);
-				if (cantidad == 1) {
-					ll_add(pArrayListPassenger, auxPassenger);
+				if (fread(auxPassenger,sizeof(Passenger),1,pFile)) {
+					ll_add(pArrayListPassenger,auxPassenger);
 				}
 			}
 		}while(feof(pFile)==0);
 		fclose(pFile);
-		printf("Archivo binario abierto y cerrado con exito.\n\n");
+		printf("Archivo binario abierto y cargado con exito.\n\n");
 	}else{
 		printf("Error al intentar abrir el archivo binario.\n\n");
 	}
 
-
     return 1;
+}
+
+int parser_GetMaxId(){
+	int idAux;
+	char idStr[50];
+	int elementosDeLinea;
+
+	idAux = -1;
+	FILE *pArchivo = fopen("Ids.csv", "r");
+	if (pArchivo != NULL) {
+		fscanf(pArchivo, "%[^\n]\n", idStr);
+		do {
+			elementosDeLinea = fscanf(pArchivo, "%[^\n]\n", idStr);
+			if (elementosDeLinea == 1) {
+				if (idAux < atoi(idStr)) {
+					idAux = atoi(idStr);
+				}
+			}
+		} while (feof(pArchivo) == 0);
+	}
+
+	return idAux;
 }
